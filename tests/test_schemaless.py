@@ -1,8 +1,7 @@
-import fastavro
-
-from fastavro.six import MemoryIO
-
 import pytest
+
+import fastavro
+from fastavro.six import MemoryIO
 
 pytestmark = pytest.mark.usefixtures("clean_readers_writers_and_schemas")
 
@@ -88,3 +87,59 @@ def test_default_values_in_reader():
         reader_schema,
     )
     assert new_record == {'good_field': 1, 'good_compatible_field': 1}
+
+
+_test_union = [
+    ({"name": {"first": "Hakuna", "last": "Matata"}}),
+    ({"name": {"entireName": "Hakuna Matata"}}),
+    ({"name": None}),
+]
+
+
+@pytest.mark.parametrize('record', _test_union)
+def test_json_encoding(record):
+    schema = {
+        "type": "record",
+        "namespace": "com.example",
+        "name": "NameUnion",
+        "fields": [
+            {
+                "name": "name",
+                "type": [
+                    "null",
+                    {
+                        "type": "record",
+                        "namespace": "com.example",
+                        "name": "FullName",
+                        "fields": [
+                            {
+                                "name": "first",
+                                "type": "string"
+                            },
+                            {
+                                "name": "last",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "record",
+                        "namespace": "com.example",
+                        "name": "ConcatenatedFullName",
+                        "fields": [
+                            {
+                                "name": "entireName",
+                                "type": "string"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+    new_file = MemoryIO()
+    fastavro.schemaless_json_writer(new_file, schema, record)
+    new_file.seek(0)
+
+    new_record = fastavro.schemaless_json_reader(new_file, schema)
+    assert record == new_record
