@@ -93,6 +93,12 @@ _test_union = [
     ({"name": {"first": "Hakuna", "last": "Matata"}}),
     ({"name": {"entireName": "Hakuna Matata"}}),
     ({"name": None}),
+
+    ({"name": True}),
+    ({"name": 23}),
+    ({"name": 0x80000000}),
+    ({"name": 23.3}),
+    ({"name": "Hakuna Matata"}),
 ]
 
 
@@ -132,6 +138,35 @@ def test_json_encoding(record):
                                 "type": "string"
                             }
                         ]
+                    },
+                    {
+                        "type": "array",
+                        "items": "com.example.ConcatenatedFullName"
+                    },
+                    {
+                        "type": "map",
+                        "values": "com.example.ConcatenatedFullName"
+                    },
+                    {
+                        "type": "boolean"
+                    },
+                    {
+                        "type": "int"
+                    },
+                    {
+                        "type": "long"
+                    },
+                    {
+                        "type": "float"
+                    },
+                    {
+                        "type": "double"
+                    },
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "bytes"
                     }
                 ]
             }
