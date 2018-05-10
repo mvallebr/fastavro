@@ -93,7 +93,6 @@ _test_union = [
     ({"name": {"first": "Hakuna", "last": "Matata"}}),
     ({"name": {"entireName": "Hakuna Matata"}}),
     ({"name": None}),
-
     ({"name": True}),
     ({"name": 23}),
     ({"name": 0x80000000}),
